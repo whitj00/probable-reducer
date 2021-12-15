@@ -8,8 +8,7 @@ class ZeroOrderMarkov(Reducer):
         self.string_len = string_len
         self.alphabet = list(string.ascii_lowercase)
         self.mu = {'a': -247, 'b': -388, 'c': -309, 'd': -339, 'e': -219, 'f': -401, 'g': -370, 'h': -351, 'i': -258, 'j': -623, 'k': -451, 'l': -290, 'm': -350, 'n': -271, 'o': -264, 'p': -345, 'q': -623, 'r': -258, 's': -286, 't': -267, 'u': -332, 'v': -460, 'w': -435, 'x': -584, 'y': -403, 'z': -591}
-        self.threshold = self.mu['a'] * (self.string_len-2) + self.mu['o'] + self.mu['w']
-        self.threshold = -1590
+        self.threshold = -1565
         self.partial_size = {x:{} for x in range(0,self.string_len+1)}
         self.size = self.__build_dictionary()
 
