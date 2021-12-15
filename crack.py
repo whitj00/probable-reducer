@@ -87,6 +87,7 @@ def main():
     either_group.add_argument('--order', '-o', dest='order', default=0, type=int, choices=range(0,2), help='the order markov of the markov chain we should create')
     either_group.add_argument('--conventional', dest='conventional', action='store_true', help="Use a conventional reducer")
     parser.add_argument('--password-length', '-pl', dest='pwlen', default=6, type=int, help="The length of passwords we generate")
+    parser.add_argument('--dry', dest='crack', action='store_false', help="Only show generation statistics")
     args = parser.parse_args()
 
     if args.conventional:
@@ -96,7 +97,8 @@ def main():
         rainbow_table = Rainbow(args.chains, args.length, dictionary.reduce)
     print("Collision Rate:",rainbow_table.collision_rate())
     print("Encoded Passwords:",rainbow_table.encoded_upper_bound())
-    test_on_file(args.file, rainbow_table)
+    if args.crack:
+        test_on_file(args.file, rainbow_table)
 
 main()
 
