@@ -13,7 +13,7 @@ class FirstOrderMarkov(Reducer):
         self.alphabet = list(string.ascii_lowercase)
         self.zero_order_prob_func = {'a': -247, 'b': -388, 'c': -309, 'd': -339, 'e': -219, 'f': -401, 'g': -370, 'h': -351, 'i': -258, 'j': -623, 'k': -451, 'l': -290, 'm': -350, 'n': -271, 'o': -264, 'p': -345, 'q': -623, 'r': -258, 's': -286, 't': -267, 'u': -332, 'v': -460, 'w': -435, 'x': -584, 'y': -403, 'z': -591}
         self.first_order_prob_func = self.__first_order_probabilities()
-        self.threshold = -1280
+        self.threshold = -1350
         self.partial_size = {x:{letter:{} for letter in self.alphabet} for x in range(0,self.string_len+1)}
         self.partial_size[0]['*'] = {}
         self.size = self.__build_model()
