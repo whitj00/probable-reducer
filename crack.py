@@ -19,6 +19,8 @@ def create_dictionary(length : int, order : int = 0) -> Reducer:
         raise("Reducer Order Not Implemented")
     elapsed = time.time() - start
     print(f"Created an order {order} markov dictionary of size {dictionary.size} [Time: {elapsed}s]")
+    if(dictionary.size == 0):
+        raise(Exception("Dictionary Size Zero"))
     return dictionary
 
 def test_reducer_speed(dictionary : Reducer, test_size : int = 1000000) -> None:

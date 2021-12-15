@@ -9,6 +9,7 @@ class Rainbow():
         self.chains = self.build_table()
 
     def build_table(self):
+        '''Build a rainbow table'''
         for chain_no in range(0,self.max_chains):
             init = self.reducer(chain_no,0)
 
@@ -21,12 +22,15 @@ class Rainbow():
         return len(self.table)
 
     def collision_rate(self):
+        '''Calculate the estimated collision rate'''
         return 1 - (self.chains/self.max_chains)
 
     def encoded_upper_bound(self):
+        '''Calculates the approximate number of passwords our table encodes'''
         return self.chains * self.rounds
 
     def crack_hash(self,hash):
+        '''Attempts to crack `hash`'''
         for i in range(0,self.rounds):
             hypothesis = self.rounds - 1 - i
             ciphertext = int(hash,16)
