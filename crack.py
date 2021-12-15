@@ -39,7 +39,7 @@ def print_dictionary(dictionary : Reducer, max_keys : int = None, output_file : 
         for key in range(max_keys):
             print(dictionary.reduce(key, 0),file=f)
 
-def test_on_file(test_file : str, rainbow_table : Rainbow) -> None:
+def test_on_file(test_file : str, rainbow_table : Rainbow, limit = 0) -> None:
     """A function to test the speed and success rate of a rainbow table
 
     Args:
@@ -57,9 +57,12 @@ def test_on_file(test_file : str, rainbow_table : Rainbow) -> None:
                 successes += 1
                 print(f"{hash}:{plaintext.decode()}", file=f2)
                 print(f"{hash}:{plaintext.decode()} [Success Rate: {'{:.2f}'.format(successes*100/tries)}% ({successes}/{tries})]")
-                if successes == 500:
-                    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
-                    return
+                if(limit > 0):
+                    if successes == limit:
+                        print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
+                        return
+    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
+
 def reduce_norm_gen(length : int):
     def reduce_norm(hash : int, r : int) -> str:
         """A non-probablistic reducer
@@ -88,6 +91,7 @@ def main():
     either_group.add_argument('--conventional', dest='conventional', action='store_true', help="Use a conventional reducer")
     parser.add_argument('--password-length', '-pl', dest='pwlen', default=6, type=int, help="The length of passwords we generate")
     parser.add_argument('--dry', dest='crack', action='store_false', help="Only show generation statistics")
+    parser.add_argument('--limit', dest='limit', type=int, help="Maximimum passwords to crack")
     args = parser.parse_args()
 
     if args.conventional:
