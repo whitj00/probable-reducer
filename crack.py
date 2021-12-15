@@ -18,7 +18,7 @@ def create_dictionary(length : int, order : int = 0) -> Reducer:
     else:
         raise("Reducer Order Not Implemented")
     elapsed = time.time() - start
-    print(f"Created an order {order} markov dictionary of size {dictionary.size} ({'{:.2f}'.format(dictionary.size*100/(26**length))}% of keyspace) [Time: {'{:.2f}'.format(elapsed)}s]")
+    print(f"Created an order {order} markov dictionary of size {dictionary.size} ({'{:.4f}'.format(dictionary.size*100/(26**length))}% of keyspace) [Time: {'{:.2f}'.format(elapsed)}s]")
     if(dictionary.size == 0):
         raise(Exception("Dictionary Size Zero"))
     return dictionary
@@ -56,12 +56,12 @@ def test_on_file(test_file : str, rainbow_table : Rainbow, limit = 0) -> None:
             if plaintext:
                 successes += 1
                 print(f"{hash}:{plaintext.decode()}", file=f2)
-                print(f"{hash}:{plaintext.decode()} [Success Rate: {'{:.2f}'.format(successes*100/tries)}% ({successes}/{tries})]")
+                print(f"{hash}:{plaintext.decode()} [Success Rate: {'{:.4f}'.format(successes*100/tries)}% ({successes}/{tries})]")
                 if(limit > 0):
                     if successes == limit:
-                        print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
+                        print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.4f}'.format(successes*100/tries)}% success rate")
                         return
-    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
+    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.4f}'.format(successes*100/tries)}% success rate")
 
 def reduce_norm_gen(length : int):
     def reduce_norm(hash : int, r : int) -> str:
@@ -101,7 +101,7 @@ def main():
         rainbow_table = Rainbow(args.chains, args.length, dictionary.reduce)
     print("Collision Rate:",rainbow_table.collision_rate())
     encoded_upper_bound = rainbow_table.encoded_upper_bound()
-    print("Encoded Passwords:",encoded_upper_bound,f"({'{:.2f}'.format(encoded_upper_bound*100/(26**args.pwlen))}% of keyspace)")
+    print("Encoded Passwords:",encoded_upper_bound,f"({'{:.4f}'.format(encoded_upper_bound*100/(26**args.pwlen))}% of keyspace)")
     if args.crack:
         test_on_file(args.file, rainbow_table, args.limit)
 
