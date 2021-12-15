@@ -32,7 +32,7 @@ class FirstOrderMarkov(Reducer):
             for l in occurence_count:
                 prob = int(occurence_count[f][l])/total
                 # Round values to reduce "levels"
-                prob_func[f][l] = -0.06 * round(ln(prob)/-0.06) if prob != 0 else -10000
+                prob_func[f][l] = -0.2 * round(ln(prob)/-0.2) if prob != 0 else -10000
         return prob_func
 
     def __mu(self, first_char : str, second_char : str = None) -> Union[int, float]:
