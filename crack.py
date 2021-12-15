@@ -18,7 +18,7 @@ def create_dictionary(length : int, order : int = 0) -> Reducer:
     else:
         raise("Reducer Order Not Implemented")
     elapsed = time.time() - start
-    print(f"Created an order {order} markov dictionary of size {dictionary.size} [Time: {elapsed}s]")
+    print(f"Created an order {order} markov dictionary of size {dictionary.size} ({'{:.2f}'.format(dictionary.size*100/(26**length))}% of keyspace) [Time: {elapsed}s]")
     if(dictionary.size == 0):
         raise(Exception("Dictionary Size Zero"))
     return dictionary
@@ -91,7 +91,7 @@ def main():
     either_group.add_argument('--conventional', dest='conventional', action='store_true', help="Use a conventional reducer")
     parser.add_argument('--password-length', '-pl', dest='pwlen', default=6, type=int, help="The length of passwords we generate")
     parser.add_argument('--dry', dest='crack', action='store_false', help="Only show generation statistics")
-    parser.add_argument('--limit', dest='limit', type=int, help="Maximimum passwords to crack")
+    parser.add_argument('--limit', dest='limit', default=0, type=int, help="Maximimum passwords to crack")
     args = parser.parse_args()
 
     if args.conventional:
@@ -102,7 +102,7 @@ def main():
     print("Collision Rate:",rainbow_table.collision_rate())
     print("Encoded Passwords:",rainbow_table.encoded_upper_bound())
     if args.crack:
-        test_on_file(args.file, rainbow_table)
+        test_on_file(args.file, rainbow_table, args.limit)
 
 main()
 
