@@ -18,7 +18,9 @@ def create_dictionary(length : int, order : int = 0) -> Reducer:
     else:
         raise("Reducer Order Not Implemented")
     elapsed = time.time() - start
-    print(f"Created an order {order} markov dictionary of size {dictionary.size} [Time: {elapsed}s]")
+    print(f"Created an order {order} markov dictionary of size {dictionary.size} ({'{:.4f}'.format(dictionary.size*100/(26**length))}% of keyspace) [Time: {'{:.2f}'.format(elapsed)}s]")
+    if(dictionary.size == 0):
+        raise(Exception("Dictionary Size Zero"))
     return dictionary
 
 def test_reducer_speed(dictionary : Reducer, test_size : int = 1000000) -> None:
@@ -37,7 +39,7 @@ def print_dictionary(dictionary : Reducer, max_keys : int = None, output_file : 
         for key in range(max_keys):
             print(dictionary.reduce(key, 0),file=f)
 
-def test_on_file(test_file : str, rainbow_table : Rainbow) -> None:
+def test_on_file(test_file : str, rainbow_table : Rainbow, limit = 0) -> None:
     """A function to test the speed and success rate of a rainbow table
 
     Args:
@@ -54,10 +56,13 @@ def test_on_file(test_file : str, rainbow_table : Rainbow) -> None:
             if plaintext:
                 successes += 1
                 print(f"{hash}:{plaintext.decode()}", file=f2)
-                print(f"{hash}:{plaintext.decode()} [Success Rate: {'{:.2f}'.format(successes*100/tries)}% ({successes}/{tries})]")
-                if successes == 500:
-                    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.2f}'.format(successes*100/tries)}% success rate")
-                    return
+                print(f"{hash}:{plaintext.decode()} [Success Rate: {'{:.4f}'.format(successes*100/tries)}% ({successes}/{tries})]")
+                if(limit > 0):
+                    if successes == limit:
+                        print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.4f}'.format(successes*100/tries)}% success rate")
+                        return
+    print(f"Cracked {successes} passwords in {time.time()-start} seconds with a {'{:.4f}'.format(successes*100/tries)}% success rate")
+
 def reduce_norm_gen(length : int):
     def reduce_norm(hash : int, r : int) -> str:
         """A non-probablistic reducer
@@ -85,6 +90,8 @@ def main():
     either_group.add_argument('--order', '-o', dest='order', default=0, type=int, choices=range(0,2), help='the order markov of the markov chain we should create')
     either_group.add_argument('--conventional', dest='conventional', action='store_true', help="Use a conventional reducer")
     parser.add_argument('--password-length', '-pl', dest='pwlen', default=6, type=int, help="The length of passwords we generate")
+    parser.add_argument('--dry', dest='crack', action='store_false', help="Only show generation statistics")
+    parser.add_argument('--limit', dest='limit', default=0, type=int, help="Maximimum passwords to crack")
     args = parser.parse_args()
 
     if args.conventional:
@@ -93,8 +100,10 @@ def main():
         dictionary = create_dictionary(args.pwlen, args.order)
         rainbow_table = Rainbow(args.chains, args.length, dictionary.reduce)
     print("Collision Rate:",rainbow_table.collision_rate())
-    print("Encoded Passwords:",rainbow_table.encoded_upper_bound())
-    test_on_file(args.file, rainbow_table)
+    encoded_upper_bound = rainbow_table.encoded_upper_bound()
+    print("Encoded Passwords:",encoded_upper_bound,f"({'{:.4f}'.format(encoded_upper_bound*100/(26**args.pwlen))}% of keyspace)")
+    if args.crack:
+        test_on_file(args.file, rainbow_table, args.limit)
 
 main()
 

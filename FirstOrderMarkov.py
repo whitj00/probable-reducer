@@ -13,26 +13,19 @@ class FirstOrderMarkov(Reducer):
         self.alphabet = list(string.ascii_lowercase)
         self.zero_order_prob_func = {'a': -247, 'b': -388, 'c': -309, 'd': -339, 'e': -219, 'f': -401, 'g': -370, 'h': -351, 'i': -258, 'j': -623, 'k': -451, 'l': -290, 'm': -350, 'n': -271, 'o': -264, 'p': -345, 'q': -623, 'r': -258, 's': -286, 't': -267, 'u': -332, 'v': -460, 'w': -435, 'x': -584, 'y': -403, 'z': -591}
         self.first_order_prob_func = self.__first_order_probabilities()
-        self.threshold = -235
+        #self.threshold = -1252
+        self.threshold = -1150
         self.partial_size = {x:{letter:{} for letter in self.alphabet} for x in range(0,self.string_len+1)}
         self.partial_size[0]['*'] = {}
         self.size = self.__build_model()
 
     def __first_order_probabilities(self) -> dict:
         """Constructs probability dict for bi-grams"""
-        occurence_count = {letter:{} for letter in self.alphabet}
         prob_func = {letter:{} for letter in self.alphabet}
         with open('data/bigram.csv', 'r') as csvfile:
             bigram_reader = csv.reader(csvfile)
             for row in bigram_reader:
-                occurence_count[row[0]][row[1]] = row[2]
-
-        for f in occurence_count:
-            total = sum(map(int,occurence_count[f].values()))
-            for l in occurence_count:
-                prob = int(occurence_count[f][l])/total
-                # Round values to reduce "levels"
-                prob_func[f][l] = -0.06 * round(ln(prob)/-0.06) if prob != 0 else -10000
+                prob_func[row[0]][row[1]] = int(row[2])
         return prob_func
 
     def __mu(self, first_char : str, second_char : str = None) -> Union[int, float]:
